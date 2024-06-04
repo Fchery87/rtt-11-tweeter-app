@@ -1,0 +1,52 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  margin: 10px 0;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  max-width: 600px;
+  width: 100%;
+  align-items: flex-start; /* Ensure content is left-aligned */
+}
+
+.container:hover {
+  transform: scale(1.02);
+}
+
+.container div {
+  margin: 5px 0;
+}
+
+.container .username {
+  font-weight: bold;
+  color: #1da1f2;
+}
+
+.container .content {
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+.container .actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.container .actions div {
+  display: flex;
+  align-items: center;
+}
+
+.container .actions div svg {
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.container .actions .delete-button {
+  align-self: center; /* Center the delete button */
+}
