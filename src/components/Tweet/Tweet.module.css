@@ -37,16 +37,21 @@
   width: 100%;
 }
 
-.container .actions div {
+.container .buttons {
+  display: flex;
+  gap: 15px; /* Space between buttons */
+}
+
+.container .heart-button, .container .retweet-button {
   display: flex;
   align-items: center;
 }
 
-.container .actions div svg {
+.container .heart-button svg, .container .retweet-button svg {
   margin-right: 5px;
   cursor: pointer;
 }
 
-.container .actions .delete-button {
+.container .delete-button {
   align-self: center; /* Center the delete button */
 }

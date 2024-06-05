@@ -7,20 +7,22 @@ import Button from 'react-bootstrap/Button';
 function Tweet({ tweet, removeTweet }) {
   return (
     <div className={styles.container}>
-      <div>{tweet.username}</div>
-      <div>{tweet.content}</div>
-      <div>
-        <div>
-          <FaHeart /> {tweet.likes}{' '}
+      <div className={styles.username}>{tweet.username}</div>
+      <div className={styles.content}>{tweet.content}</div>
+      <div className={styles.actions}>
+        <div className={styles.buttons}>
+          <div className={styles.heartButton}>
+            <FaHeart /> {tweet.likes}
+          </div>
+          <div className={styles.retweetButton}>
+            <LiaRetweetSolid /> {tweet.retweets}
+          </div>
         </div>
-        <div>
-          <LiaRetweetSolid />
-          {tweet.retweets}{' '}
-        </div>
-      </div>
-
-      <div>
-        <Button variant='danger' onClick={() => removeTweet(tweet.id)}>
+        <Button
+          variant='danger'
+          onClick={() => removeTweet(tweet.id)}
+          className={styles.deleteButton}
+        >
           Delete
         </Button>
       </div>
@@ -29,8 +31,8 @@ function Tweet({ tweet, removeTweet }) {
 }
 
 Tweet.propTypes = {
-  tweet: PropTypes.object,
-  removeTweet: PropTypes.func,
+  tweet: PropTypes.object.isRequired,
+  removeTweet: PropTypes.func.isRequired,
 };
 
 export default Tweet;
