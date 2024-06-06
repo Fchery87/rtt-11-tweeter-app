@@ -1,18 +1,15 @@
-
-import './App.css'
-import TweetsList from './components/TweetsList';
+import { Container } from "react-bootstrap";
+import "./App.css";
+import TweetsList from "./components/TweetsList";
 
 function App() {
-
   return (
-    <>
-      <main>
-        {/* <h1>Twitter App</h1> */}
+    <Container>
+      <h1>Twitter App</h1>
 
-        <TweetsList />
-      </main>
-    </>
-  )
+      <TweetsList />
+    </Container>
+  );
 }
 
-export default App
+export default App;
