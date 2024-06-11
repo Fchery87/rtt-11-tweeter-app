@@ -1,62 +1,112 @@
-import { useState } from 'react';
-import Tweet from '../Tweet';
-import CreateTweetForm from '../CreateTweetForm';
+import { Suspense, useState, useEffect } from "react";
+// import { v4 as uuidv4 } from "uuid";
+import { ErrorBoundary } from "react-error-boundary";
+import Tweet from "../Tweet";
+import CreateTweetForm from "../CreateTweetForm";
+// import { data } from "../../data/data";
+import axios from "axios";
 
-import { v4 as uuidv4 } from 'uuid';
-import { data } from '../../data/data';
+import "./TweetsList.module.css";
 
-import './TweetsList.module.css';
+// vite env vars -> https://vitejs.dev/guide/env-and-mode
+console.log(import.meta.env.MODE);
+const serverUrl =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:4000"
+    : "https://twitter-backend-zr6i.onrender.com";
+
 
 function TweetsList() {
-  const [tweets, setTweets] = useState(data);
+  const [tweets, setTweets] = useState(null); // initial value is now null
 
-  // Create New Tweet
-  const addTweet = (newTweet) => {
-    const tweetDoc = {
-      content: newTweet,
-      username: 'abe123',
-      likes: 0,
-      retweets: 0,
-      timestamp: new Date(),
-      id: uuidv4(),
-    };
+  // useEffect is used to fetch the tweets when the component is rendered
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await axios.get(`${serverUrl}/tweets`);
+        console.log(res.data);
+        setTweets([...res.data]); // here the data is set to the state
+      };
+      fetchData();
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
-    setTweets([tweetDoc, ...tweets]);
+  // addTweet will make a POST request and create a new tweet
+  const addTweet = async (newTweet) => {
+    try {
+      const res = await axios.post(`${serverUrl}/tweets`, {
+        newTweet,
+        username: "hush123",
+      });
+      console.log(res.data);
+      setTweets([res.data, ...tweets]); // new tweet is added to the state
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  // Delete a Tweet
-  const removeTweet = (tweetId) => {
-    setTweets(tweets.filter((t) => t.id !== tweetId));
+  // removeTweet will make a DELETE request and delete a tweet by the id
+  const removeTweet = async (tweetId) => {
+    try {
+      const res = await axios.delete(`${serverUrl}/tweets/${tweetId}`);
+      // if request was 'ok' remove from app state
+      if (res.status === 200) {
+        setTweets(tweets.filter((t) => t._id !== tweetId));
+      } else {
+        throw Error("Error deleting tweet");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  //Update Tweet
-  const updateTweet = (tweetId, newTweetContent) => {
-    setTweets(
-      tweets.map((t) => {
-        if (t.id === tweetId) {
-          return {
-            ...t,
-            content: newTweetContent,
-          };
-        } else return t;
-      })
-    );
+  const updateTweet = async (tweetId, newTweetContent) => {
+    try {
+      const res = await axios.put(`${serverUrl}/tweets/${tweetId}`, {newTweetContent});
+
+      // if request was 'ok' remove from app state
+      if (res.status === 200) {
+        setTweets(
+          tweets.map((t) => {
+            if (t._id === tweetId) {
+              return {
+                ...t,
+                content:res.data.content,
+              };
+            } else {
+              return t;
+            }
+          }),
+        );
+      } else {
+        throw Error("Error updating tweet");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
-    <div className='mt-4'>
+    <div className="mt-4">
       <CreateTweetForm addTweet={addTweet} />
 
-      <section>
-        {tweets.map((item) => (
-          <Tweet
-            tweet={item}
-            key={item.id}
-            removeTweet={removeTweet}
-            updateTweet={updateTweet}
-          />
-        ))}
-      </section>
+      <ErrorBoundary fallback={<div>Error loading Tweets!</div>}>
+        <Suspense fallback={<div>Loading...</div>}>
+          <section>
+            {tweets &&
+              tweets.map((item) => (
+                <Tweet
+                  tweet={item}
+                  key={item._id}
+                  removeTweet={removeTweet}
+                  updateTweet={updateTweet}
+                />
+              ))}
+          </section>
+        </Suspense>
+      </ErrorBoundary>
     </div>
   );
 }
